@@ -1,13 +1,14 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import {
   BarChart3, TrendingUp, TrendingDown, DollarSign,
   Users, Wrench, Package,
 } from 'lucide-react'
-import {
-  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
-  XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
-} from 'recharts'
+
+const RevenueExpensesChart = dynamic(() => import('@/components/charts/ReportsCharts').then(m => m.RevenueExpensesChart), { ssr: false })
+const ServicePieChart      = dynamic(() => import('@/components/charts/ReportsCharts').then(m => m.ServicePieChart), { ssr: false })
+const CustomersBarChart    = dynamic(() => import('@/components/charts/ReportsCharts').then(m => m.CustomersBarChart), { ssr: false })
 
 const revenueData = [
   { month: 'يناير', revenue: 18000, expenses: 8000 },
@@ -34,14 +35,6 @@ const monthlyCustomers = [
   { month: 'مايو',  new: 9,  returning: 42 },
   { month: 'يونيو', new: 11, returning: 48 },
 ]
-
-const TOOLTIP_STYLE = {
-  background: '#181B22',
-  border: '1px solid rgba(255,255,255,0.08)',
-  borderRadius: '8px',
-  color: '#F1FAEE',
-  fontSize: 12,
-}
 
 const kpis = [
   { label: 'إجمالي الإيراد',      value: '143,000 ج.م', sub: 'آخر 6 أشهر',    icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-500/10', trend: '+18.4%', up: true },
@@ -105,25 +98,7 @@ export default function ReportsPage() {
             </span>
           </div>
         </div>
-        <ResponsiveContainer width="100%" height={240}>
-          <AreaChart data={revenueData}>
-            <defs>
-              <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%"  stopColor="#E63946" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#E63946" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="expGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%"  stopColor="#6b7280" stopOpacity={0.2} />
-                <stop offset="95%" stopColor="#6b7280" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6b7280', fontFamily: 'Cairo' }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
-            <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v: number) => [`${v.toLocaleString()} ج.م`]} />
-            <Area type="monotone" dataKey="revenue"  stroke="#E63946" strokeWidth={2} fill="url(#revGrad)" name="الإيراد" dot={false} />
-            <Area type="monotone" dataKey="expenses" stroke="#6b7280" strokeWidth={1.5} fill="url(#expGrad)" name="المصروفات" dot={false} />
-          </AreaChart>
-        </ResponsiveContainer>
+        <RevenueExpensesChart data={revenueData} />
       </div>
 
       {/* Service breakdown + Customer chart */}
@@ -132,14 +107,7 @@ export default function ReportsPage() {
         <div className="glass-card p-5">
           <h2 className="font-semibold text-foreground font-arabic mb-4">توزيع أنواع الخدمات</h2>
           <div className="flex items-center gap-4">
-            <ResponsiveContainer width="50%" height={180}>
-              <PieChart>
-                <Pie data={serviceData} dataKey="value" cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3}>
-                  {serviceData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
-                </Pie>
-                <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v: number) => [`${v}%`, 'النسبة']} />
-              </PieChart>
-            </ResponsiveContainer>
+            <ServicePieChart data={serviceData} />
             <div className="flex-1 space-y-2">
               {serviceData.map((s) => (
                 <div key={s.name} className="flex items-center justify-between">
@@ -158,16 +126,7 @@ export default function ReportsPage() {
         <div className="glass-card p-5">
           <h2 className="font-semibold text-foreground font-arabic mb-1">العملاء الجدد مقابل العائدين</h2>
           <p className="text-xs text-muted-foreground mb-4 font-arabic">آخر 6 أشهر</p>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={monthlyCustomers} barGap={4}>
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6b7280', fontFamily: 'Cairo' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={TOOLTIP_STYLE} />
-              <Legend wrapperStyle={{ fontSize: 11, fontFamily: 'Cairo' }} formatter={(v) => v === 'new' ? 'جدد' : 'عائدون'} />
-              <Bar dataKey="returning" name="returning" fill="#457B9D" radius={[4,4,0,0]} />
-              <Bar dataKey="new"       name="new"       fill="#E63946" radius={[4,4,0,0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <CustomersBarChart data={monthlyCustomers} />
         </div>
       </div>
 
