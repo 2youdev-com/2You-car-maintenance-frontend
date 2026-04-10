@@ -135,7 +135,7 @@ export function useCustomers(centerId: string) {
       .select('customer_id')
       .eq('center_id', centerId)
 
-    const ids = [...new Set((vehicleLinks || []).map((v: { customer_id: string }) => v.customer_id))]
+    const ids = Array.from(new Set((vehicleLinks || []).map((v: { customer_id: string }) => v.customer_id)))
     if (ids.length === 0) return { data: [], error: null }
 
     return supabase
