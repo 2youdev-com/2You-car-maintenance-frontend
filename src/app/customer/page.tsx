@@ -1,3 +1,5 @@
+'use client'
+
 import { Car, Clock, DollarSign, Wrench, Package, QrCode } from 'lucide-react'
 
 // Mock customer data

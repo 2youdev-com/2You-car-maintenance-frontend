@@ -1,3 +1,5 @@
+'use client'
+
 import MaintenanceLogForm from '@/components/forms/MaintenanceLogForm'
 import { ClipboardList } from 'lucide-react'
 

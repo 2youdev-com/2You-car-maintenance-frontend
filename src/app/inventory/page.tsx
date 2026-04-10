@@ -1,3 +1,5 @@
+'use client'
+
 import InventoryTable from '@/components/forms/InventoryTable'
 import { Package } from 'lucide-react'
 

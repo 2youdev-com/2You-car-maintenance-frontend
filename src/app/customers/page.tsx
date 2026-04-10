@@ -1,3 +1,5 @@
+'use client'
+
 import { Users, Phone, Car, Search, Plus, ChevronRight } from 'lucide-react'
 import { getInitials, formatDateShort } from '@/lib/utils'
 
