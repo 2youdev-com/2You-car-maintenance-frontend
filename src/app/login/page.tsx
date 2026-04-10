@@ -2,12 +2,11 @@
 
 import { useState } from 'react'
 import { Eye, EyeOff, LogIn, Wrench } from 'lucide-react'
-import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import { apiFetch } from '@/lib/api'
 
 export default function LoginPage() {
-  const router   = useRouter()
-  const supabase = createClient()
+  const router = useRouter()
 
   const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState('')
@@ -20,15 +19,21 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
 
-    const { error: err } = await supabase.auth.signInWithPassword({ email, password })
+    try {
+      const data = await apiFetch<{ token: string; user: { id: string; role: string } }>('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      })
 
-    if (err) {
+      localStorage.setItem('token', data.token)
+      document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`
+
+      router.push('/dashboard')
+    } catch {
       setError('البريد الإلكتروني أو كلمة المرور غير صحيحة')
+    } finally {
       setLoading(false)
-      return
     }
-
-    router.push('/dashboard')
   }
 
   return (
