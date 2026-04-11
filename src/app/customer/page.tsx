@@ -1,9 +1,9 @@
 'use client'
 
-import { Car, Clock, Wrench, Package, QrCode, LogOut, Loader2, Inbox } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { CalendarPlus, Package, Wrench, Loader2, Clock, User } from 'lucide-react'
 import { apiFetch } from '@/lib/api'
 
 interface UserProfile {
@@ -11,10 +11,9 @@ interface UserProfile {
   full_name: string
   email: string
   phone: string | null
-  role: string
 }
 
-export default function CustomerPage() {
+export default function CustomerHomePage() {
   const router = useRouter()
   const [user, setUser] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
@@ -30,66 +29,77 @@ export default function CustomerPage() {
       .finally(() => setLoading(false))
   }, [router])
 
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    document.cookie = 'token=; path=/; max-age=0'
-    window.location.href = '/login'
-  }
-
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 size={28} className="animate-spin text-brand-red" />
       </div>
     )
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 animate-fade-in py-6 px-4">
-      {/* Top bar */}
-      <div className="flex items-center justify-between">
-        <Image src="/logo.svg" alt="El Amrety" width={120} height={36} priority />
-        <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 transition-colors font-arabic">
-          <LogOut size={16} />
-          تسجيل الخروج
-        </button>
-      </div>
-
-      {/* Header card */}
-      <div className="glass-card p-6 flex items-center gap-4">
-        <div className="w-14 h-14 rounded-full bg-brand-red/20 border border-brand-red/30 flex items-center justify-center text-brand-red text-xl font-bold shrink-0">
-          {user?.full_name?.charAt(0) || '؟'}
-        </div>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-xl font-bold text-foreground font-arabic">{user?.full_name}</h1>
-          <p className="text-sm text-muted-foreground font-arabic">{user?.phone || user?.email} · عميل مركز العمريطي</p>
-        </div>
-        <div className="w-12 h-12 rounded-xl bg-surface-600 flex items-center justify-center shrink-0">
-          <QrCode size={22} className="text-muted-foreground" />
+    <div className="max-w-lg mx-auto px-4 py-6 space-y-5 animate-fade-in">
+      {/* Welcome */}
+      <div className="glass-card p-5">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-brand-red/20 border border-brand-red/30 flex items-center justify-center text-brand-red text-lg font-bold shrink-0">
+            {user?.full_name?.charAt(0) || '؟'}
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground font-arabic">أهلاً بك</p>
+            <h1 className="text-lg font-bold text-foreground font-arabic">{user?.full_name}</h1>
+          </div>
         </div>
       </div>
 
-      {/* Service History — empty state */}
-      <div className="glass-card overflow-hidden">
-        <div className="flex items-center gap-2 px-5 py-4 border-b border-white/[0.06]">
-          <Wrench size={16} className="text-brand-red" />
-          <h2 className="font-semibold text-foreground font-arabic">سجل الصيانة</h2>
-        </div>
-        <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-          <Inbox size={32} className="mb-3 opacity-40" />
-          <p className="text-sm font-arabic">لا توجد سجلات صيانة بعد</p>
+      {/* Quick Actions */}
+      <div className="space-y-2">
+        <h2 className="text-sm font-semibold text-muted-foreground font-arabic px-1">الخدمات</h2>
+        <div className="grid grid-cols-1 gap-3">
+          <Link href="/customer/booking" className="glass-card p-4 flex items-center gap-4 hover:border-brand-red/30 hover:bg-brand-red/5 transition-all group">
+            <div className="w-11 h-11 rounded-xl bg-brand-red/15 flex items-center justify-center group-hover:bg-brand-red/25 transition-colors">
+              <CalendarPlus size={20} className="text-brand-red" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold font-arabic text-foreground">حجز موعد صيانة</p>
+              <p className="text-[11px] text-muted-foreground font-arabic">احجز موعدك في أقرب فرع</p>
+            </div>
+          </Link>
+
+          <Link href="/customer/products" className="glass-card p-4 flex items-center gap-4 hover:border-brand-red/30 hover:bg-brand-red/5 transition-all group">
+            <div className="w-11 h-11 rounded-xl bg-blue-500/15 flex items-center justify-center group-hover:bg-blue-500/25 transition-colors">
+              <Package size={20} className="text-blue-400" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold font-arabic text-foreground">المنتجات والأسعار</p>
+              <p className="text-[11px] text-muted-foreground font-arabic">تصفح قطع الغيار والزيوت</p>
+            </div>
+          </Link>
+
+          <Link href="/customer/maintenance" className="glass-card p-4 flex items-center gap-4 hover:border-brand-red/30 hover:bg-brand-red/5 transition-all group">
+            <div className="w-11 h-11 rounded-xl bg-green-500/15 flex items-center justify-center group-hover:bg-green-500/25 transition-colors">
+              <Wrench size={20} className="text-green-400" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold font-arabic text-foreground">سجل صيانتي</p>
+              <p className="text-[11px] text-muted-foreground font-arabic">سجّل وتابع صيانة سيارتك</p>
+            </div>
+          </Link>
         </div>
       </div>
 
-      {/* Parts Catalog — empty state */}
-      <div className="glass-card overflow-hidden">
-        <div className="flex items-center gap-2 px-5 py-4 border-b border-white/[0.06]">
-          <Package size={16} className="text-brand-red" />
-          <h2 className="font-semibold text-foreground font-arabic">كتالوج قطع الغيار</h2>
-        </div>
-        <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-          <Inbox size={32} className="mb-3 opacity-40" />
-          <p className="text-sm font-arabic">لا توجد قطع غيار حالياً</p>
+      {/* Center Info */}
+      <div className="glass-card p-4">
+        <h3 className="text-xs font-semibold text-muted-foreground font-arabic mb-3">فروعنا</h3>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-sm font-arabic text-foreground">
+            <Clock size={13} className="text-brand-red shrink-0" />
+            <span>فرع شارع سعد زغلول — المنصورة</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm font-arabic text-foreground">
+            <Clock size={13} className="text-brand-red shrink-0" />
+            <span>فرع شارع قناة السويس — المنصورة</span>
+          </div>
         </div>
       </div>
     </div>

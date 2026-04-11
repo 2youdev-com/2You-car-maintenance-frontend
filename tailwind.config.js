@@ -38,6 +38,10 @@ module.exports = {
         'fade-in':  'fadeIn 0.4s ease-out',
         'slide-in': 'slideIn 0.3s ease-out',
         shimmer:    'shimmer 2s infinite linear',
+        'float': 'float-up-down 3s ease-in-out infinite',
+        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+        'rev': 'rev-engine 0.5s ease-in-out',
+        'drive': 'drive-across 15s linear infinite',
       },
       keyframes: {
         fadeIn: {
@@ -51,6 +55,19 @@ module.exports = {
         shimmer: {
           '0%':   { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
+        },
+        'float-up-down': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-8px)' },
+        },
+        'pulse-glow': {
+          '0%, 100%': { boxShadow: '0 0 15px rgba(230, 57, 70, 0.15)' },
+          '50%': { boxShadow: '0 0 30px rgba(230, 57, 70, 0.3), 0 0 60px rgba(230, 57, 70, 0.1)' },
+        },
+        'rev-engine': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '25%': { transform: 'scale(1.02)' },
+          '75%': { transform: 'scale(0.98)' },
         },
       },
     },

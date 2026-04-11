@@ -70,7 +70,7 @@ export default function LoginPage() {
           {/* Logo */}
           <div className="text-center space-y-3">
             <Image
-              src="/logo.svg"
+              src="/logo.png"
               alt="El Amrety"
               width={180}
               height={55}
