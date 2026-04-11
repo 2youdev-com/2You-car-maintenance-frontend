@@ -1,6 +1,6 @@
 'use client'
 
-import { Car, Clock, Wrench, Package, QrCode, LogOut, Loader2 } from 'lucide-react'
+import { Car, Clock, Wrench, Package, QrCode, LogOut, Loader2, Inbox } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
@@ -69,81 +69,27 @@ export default function CustomerPage() {
         </div>
       </div>
 
-      {/* Vehicle card */}
-      <div className="glass-card p-5">
-        <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground font-arabic mb-4">
-          <Car size={16} className="text-brand-red" />
-          سيارتي
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {[
-            { label: 'الماركة',     value: 'BMW' },
-            { label: 'الموديل',     value: '320i' },
-            { label: 'سنة الصنع',   value: '2021' },
-            { label: 'رقم اللوحة',  value: 'أ ب ج 1234' },
-          ].map((item) => (
-            <div key={item.label} className="bg-surface-700 rounded-xl p-3">
-              <p className="text-[11px] text-muted-foreground font-arabic">{item.label}</p>
-              <p className="text-sm font-semibold text-foreground font-arabic mt-0.5">{item.value}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-3 flex items-center gap-2 bg-brand-red/10 rounded-xl p-3">
-          <Clock size={14} className="text-brand-red shrink-0" />
-          <p className="text-xs font-arabic text-foreground">
-            الصيانة القادمة: <span className="font-semibold text-brand-red">تغيير زيت</span> عند 50,000 كم · مارس 2025
-          </p>
-        </div>
-      </div>
-
-      {/* Service History */}
+      {/* Service History — empty state */}
       <div className="glass-card overflow-hidden">
         <div className="flex items-center gap-2 px-5 py-4 border-b border-white/[0.06]">
           <Wrench size={16} className="text-brand-red" />
           <h2 className="font-semibold text-foreground font-arabic">سجل الصيانة</h2>
         </div>
-        <div className="divide-y divide-white/[0.04]">
-          {serviceHistory.map((log, i) => (
-            <div key={i} className="flex items-center justify-between px-5 py-4 hover:bg-surface-700/30 transition-colors">
-              <div>
-                <p className="text-sm font-medium font-arabic text-foreground">{log.service}</p>
-                <p className="text-xs text-muted-foreground font-arabic mt-0.5">
-                  {new Date(log.date).toLocaleDateString('ar-EG')} · {log.mileage.toLocaleString()} كم
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-bold font-mono text-foreground">
-                  {log.cost.toLocaleString()} ج.م
-                </span>
-                <span className="badge-green">مكتمل</span>
-              </div>
-            </div>
-          ))}
+        <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <Inbox size={32} className="mb-3 opacity-40" />
+          <p className="text-sm font-arabic">لا توجد سجلات صيانة بعد</p>
         </div>
       </div>
 
-      {/* Parts Catalog */}
+      {/* Parts Catalog — empty state */}
       <div className="glass-card overflow-hidden">
         <div className="flex items-center gap-2 px-5 py-4 border-b border-white/[0.06]">
           <Package size={16} className="text-brand-red" />
           <h2 className="font-semibold text-foreground font-arabic">كتالوج قطع الغيار</h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4">
-          {catalog.map((part, i) => (
-            <div key={i} className="flex items-center justify-between p-3.5 bg-surface-700 rounded-xl">
-              <div>
-                <p className="text-sm font-medium font-arabic text-foreground">{part.name}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{part.brand}</p>
-              </div>
-              <div className="flex flex-col items-end gap-1">
-                <span className="text-sm font-bold font-mono text-brand-red">{part.price.toLocaleString()} ج.م</span>
-                {part.available
-                  ? <span className="badge-green">متاح</span>
-                  : <span className="badge-red">غير متاح</span>
-                }
-              </div>
-            </div>
-          ))}
+        <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <Inbox size={32} className="mb-3 opacity-40" />
+          <p className="text-sm font-arabic">لا توجد قطع غيار حالياً</p>
         </div>
       </div>
     </div>
