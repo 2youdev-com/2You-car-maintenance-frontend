@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
@@ -36,13 +37,7 @@ export default function Sidebar() {
     <aside className="flex flex-col h-full w-64 bg-surface-800 border-r border-white/[0.06]">
       {/* Logo */}
       <div className="flex items-center gap-3 px-5 py-6 border-b border-white/[0.06]">
-        <div className="w-9 h-9 rounded-lg bg-brand-red flex items-center justify-center font-bold text-white text-lg glow-red">
-          E
-        </div>
-        <div>
-          <p className="font-bold text-white text-sm leading-tight">El Amrety</p>
-          <p className="text-[10px] text-muted-foreground font-arabic">مركز العمريطي</p>
-        </div>
+        <Image src="/logo.svg" alt="El Amrety" width={140} height={42} priority />
       </div>
 
       {/* Nav */}

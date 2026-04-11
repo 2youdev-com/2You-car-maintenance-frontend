@@ -1,36 +1,46 @@
 'use client'
 
 import { useState } from 'react'
-import { Eye, EyeOff, LogIn, Wrench } from 'lucide-react'
+import { Eye, EyeOff, LogIn, UserPlus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { apiFetch } from '@/lib/api'
 
 export default function LoginPage() {
   const router = useRouter()
 
-  const [email,    setEmail]    = useState('')
+  const [isRegister, setIsRegister] = useState(false)
+  const [fullName, setFullName] = useState('')
+  const [phone, setPhone]       = useState('')
+  const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
-  const [showPw,   setShowPw]   = useState(false)
-  const [loading,  setLoading]  = useState(false)
-  const [error,    setError]    = useState('')
+  const [showPw, setShowPw]     = useState(false)
+  const [loading, setLoading]   = useState(false)
+  const [error, setError]       = useState('')
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
     try {
-      const data = await apiFetch<{ token: string; user: { id: string; role: string } }>('/auth/login', {
+      const endpoint = isRegister ? '/auth/register' : '/auth/login'
+      const body = isRegister
+        ? { full_name: fullName, email, password, phone: phone || undefined }
+        : { email, password }
+
+      const data = await apiFetch<{ token: string; user: { id: string; role: string } }>(endpoint, {
         method: 'POST',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(body),
       })
 
       localStorage.setItem('token', data.token)
       document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`
 
       router.push('/dashboard')
-    } catch {
-      setError('البريد الإلكتروني أو كلمة المرور غير صحيحة')
+    } catch (err: unknown) {
+      const msg = (err as { error?: string })?.error
+      setError(msg || (isRegister ? 'فشل إنشاء الحساب' : 'البريد الإلكتروني أو كلمة المرور غير صحيحة'))
     } finally {
       setLoading(false)
     }
@@ -55,17 +65,58 @@ export default function LoginPage() {
         <div className="glass-card p-8 space-y-7">
           {/* Logo */}
           <div className="text-center space-y-3">
-            <div className="w-16 h-16 rounded-2xl bg-brand-red flex items-center justify-center mx-auto glow-red">
-              <Wrench size={28} className="text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">El Amrety</h1>
-              <p className="text-sm text-muted-foreground font-arabic mt-1">نظام إدارة مركز الصيانة</p>
-            </div>
+            <Image
+              src="/logo.svg"
+              alt="El Amrety"
+              width={180}
+              height={55}
+              className="mx-auto"
+              priority
+            />
+            <p className="text-sm text-muted-foreground font-arabic mt-1">نظام إدارة مركز الصيانة</p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name - only in register */}
+            {isRegister && (
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground font-arabic">
+                  الاسم الكامل
+                </label>
+                <input
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="أحمد محمد"
+                  required
+                  className="w-full h-10 px-3.5 rounded-xl bg-surface-700 border border-white/[0.08]
+                    text-sm text-foreground placeholder:text-muted-foreground
+                    focus:outline-none focus:ring-1 focus:ring-brand-red focus:border-brand-red/50
+                    transition-all"
+                />
+              </div>
+            )}
+
+            {/* Phone - only in register */}
+            {isRegister && (
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground font-arabic">
+                  رقم الهاتف
+                </label>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="01012345678"
+                  className="w-full h-10 px-3.5 rounded-xl bg-surface-700 border border-white/[0.08]
+                    text-sm text-foreground placeholder:text-muted-foreground
+                    focus:outline-none focus:ring-1 focus:ring-brand-red focus:border-brand-red/50
+                    transition-all"
+                />
+              </div>
+            )}
+
             {/* Email */}
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-muted-foreground font-arabic">
@@ -96,6 +147,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
+                  minLength={isRegister ? 6 : undefined}
                   className="w-full h-10 px-3.5 pr-10 rounded-xl bg-surface-700 border border-white/[0.08]
                     text-sm text-foreground placeholder:text-muted-foreground
                     focus:outline-none focus:ring-1 focus:ring-brand-red focus:border-brand-red/50
@@ -109,6 +161,9 @@ export default function LoginPage() {
                   {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
+              {isRegister && (
+                <p className="text-[10px] text-muted-foreground font-arabic">6 أحرف على الأقل</p>
+              )}
             </div>
 
             {/* Error */}
@@ -130,6 +185,11 @@ export default function LoginPage() {
             >
               {loading ? (
                 <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+              ) : isRegister ? (
+                <>
+                  <UserPlus size={15} />
+                  إنشاء حساب
+                </>
               ) : (
                 <>
                   <LogIn size={15} />
@@ -139,10 +199,17 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Demo credentials hint */}
+          {/* Toggle login/register */}
           <div className="border-t border-white/[0.05] pt-4">
             <p className="text-[11px] text-muted-foreground text-center font-arabic">
-              للتجربة: ادخل البريد وكلمة المرور المرسلة من المركز
+              {isRegister ? 'لديك حساب بالفعل؟' : 'ليس لديك حساب؟'}{' '}
+              <button
+                type="button"
+                onClick={() => { setIsRegister(!isRegister); setError('') }}
+                className="text-brand-red hover:underline font-medium"
+              >
+                {isRegister ? 'تسجيل الدخول' : 'إنشاء حساب جديد'}
+              </button>
             </p>
           </div>
         </div>
