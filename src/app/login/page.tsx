@@ -40,7 +40,10 @@ export default function LoginPage() {
       const dest = data.user.role === 'admin' ? '/dashboard' : '/customer'
       router.push(dest)
     } catch (err: unknown) {
-      const msg = (err as { error?: string })?.error
+      console.error('Auth error:', err)
+      const msg = err instanceof Error
+        ? 'خطأ في الاتصال بالسيرفر'
+        : (err as { error?: string })?.error
       setError(msg || (isRegister ? 'فشل إنشاء الحساب' : 'البريد الإلكتروني أو كلمة المرور غير صحيحة'))
     } finally {
       setLoading(false)
