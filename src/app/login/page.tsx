@@ -37,7 +37,8 @@ export default function LoginPage() {
       localStorage.setItem('token', data.token)
       document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`
 
-      router.push('/dashboard')
+      const dest = data.user.role === 'admin' ? '/dashboard' : '/customer'
+      router.push(dest)
     } catch (err: unknown) {
       const msg = (err as { error?: string })?.error
       setError(msg || (isRegister ? 'فشل إنشاء الحساب' : 'البريد الإلكتروني أو كلمة المرور غير صحيحة'))

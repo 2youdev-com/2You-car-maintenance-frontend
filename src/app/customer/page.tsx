@@ -1,6 +1,8 @@
 'use client'
 
-import { Car, Clock, DollarSign, Wrench, Package, QrCode } from 'lucide-react'
+import { Car, Clock, Wrench, Package, QrCode, LogOut } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 // Mock customer data
 const serviceHistory = [
@@ -17,8 +19,25 @@ const catalog = [
 ]
 
 export default function CustomerPage() {
+  const router = useRouter()
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    document.cookie = 'token=; path=/; max-age=0'
+    router.push('/login')
+  }
+
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-in py-6 px-4">
+      {/* Top bar */}
+      <div className="flex items-center justify-between">
+        <Image src="/logo.svg" alt="El Amrety" width={120} height={36} priority />
+        <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 transition-colors font-arabic">
+          <LogOut size={16} />
+          تسجيل الخروج
+        </button>
+      </div>
+
       {/* Header card */}
       <div className="glass-card p-6 flex items-center gap-4">
         <div className="w-14 h-14 rounded-full bg-brand-red/20 border border-brand-red/30 flex items-center justify-center text-brand-red text-xl font-bold shrink-0">
