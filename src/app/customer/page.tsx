@@ -1,30 +1,47 @@
 'use client'
 
-import { Car, Clock, Wrench, Package, QrCode, LogOut } from 'lucide-react'
+import { Car, Clock, Wrench, Package, QrCode, LogOut, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import { apiFetch } from '@/lib/api'
 
-// Mock customer data
-const serviceHistory = [
-  { date: '2024-05-10', service: 'تغيير زيت', car: 'BMW 320i 2021', mileage: 45000, cost: 850, status: 'completed' },
-  { date: '2024-03-02', service: 'صيانة فرامل', car: 'BMW 320i 2021', mileage: 40200, cost: 1400, status: 'completed' },
-  { date: '2024-01-15', service: 'فحص دوري', car: 'BMW 320i 2021', mileage: 35800, cost: 400, status: 'completed' },
-]
-
-const catalog = [
-  { name: 'زيت موتور Castrol 5W40', brand: 'Castrol', price: 280, available: true },
-  { name: 'فلتر زيت Bosch',         brand: 'Bosch',   price: 85,  available: true },
-  { name: 'تيل فرامل Brembo',       brand: 'Brembo',  price: 350, available: true },
-  { name: 'إطار Bridgestone',        brand: 'Bridgestone', price: 1200, available: false },
-]
+interface UserProfile {
+  id: string
+  full_name: string
+  email: string
+  phone: string | null
+  role: string
+}
 
 export default function CustomerPage() {
   const router = useRouter()
+  const [user, setUser] = useState<UserProfile | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    apiFetch<UserProfile>('/auth/me')
+      .then(setUser)
+      .catch(() => {
+        localStorage.removeItem('token')
+        document.cookie = 'token=; path=/; max-age=0'
+        router.push('/login')
+      })
+      .finally(() => setLoading(false))
+  }, [router])
 
   const handleLogout = () => {
     localStorage.removeItem('token')
     document.cookie = 'token=; path=/; max-age=0'
     router.push('/login')
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 size={28} className="animate-spin text-brand-red" />
+      </div>
+    )
   }
 
   return (
@@ -41,11 +58,11 @@ export default function CustomerPage() {
       {/* Header card */}
       <div className="glass-card p-6 flex items-center gap-4">
         <div className="w-14 h-14 rounded-full bg-brand-red/20 border border-brand-red/30 flex items-center justify-center text-brand-red text-xl font-bold shrink-0">
-          أ
+          {user?.full_name?.charAt(0) || '؟'}
         </div>
         <div className="flex-1 min-w-0">
-          <h1 className="text-xl font-bold text-foreground font-arabic">أحمد محمد السيد</h1>
-          <p className="text-sm text-muted-foreground font-arabic">01012345678 · عميل مركز العمريطي</p>
+          <h1 className="text-xl font-bold text-foreground font-arabic">{user?.full_name}</h1>
+          <p className="text-sm text-muted-foreground font-arabic">{user?.phone || user?.email} · عميل مركز العمريطي</p>
         </div>
         <div className="w-12 h-12 rounded-xl bg-surface-600 flex items-center justify-center shrink-0">
           <QrCode size={22} className="text-muted-foreground" />
