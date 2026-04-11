@@ -33,7 +33,7 @@ export default function CustomerPage() {
   const handleLogout = () => {
     localStorage.removeItem('token')
     document.cookie = 'token=; path=/; max-age=0'
-    router.push('/login')
+    window.location.href = '/login'
   }
 
   if (loading) {
