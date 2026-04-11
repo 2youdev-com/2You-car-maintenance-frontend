@@ -17,6 +17,7 @@ import {
   X,
 } from 'lucide-react'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
 const NAV_ITEMS = [
@@ -31,7 +32,14 @@ const NAV_ITEMS = [
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    document.cookie = 'token=; path=/; max-age=0'
+    router.push('/login')
+  }
 
   const SidebarContent = () => (
     <aside className="flex flex-col h-full w-64 bg-surface-800 border-r border-white/[0.06]">
@@ -67,7 +75,7 @@ export default function Sidebar() {
           <Settings size={17} />
           <span className="font-arabic">الإعدادات</span>
         </Link>
-        <button className="nav-item w-full text-red-400 hover:text-red-300 hover:bg-red-500/10">
+        <button onClick={handleLogout} className="nav-item w-full text-red-400 hover:text-red-300 hover:bg-red-500/10">
           <LogOut size={17} />
           <span className="font-arabic">تسجيل الخروج</span>
         </button>
