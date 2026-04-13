@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
   const payload = token ? parseJwtPayload(token) : null
   const role = payload?.role
 
-  const adminRoutes = ['/dashboard', '/maintenance', '/inventory', '/customers', '/vehicles', '/appointments', '/reports', '/settings']
+  const adminRoutes = ['/dashboard', '/maintenance', '/inventory', '/customers', '/vehicles', '/appointments', '/reports', '/settings', '/chat']
   const isAdminRoute = adminRoutes.some((r) => pathname.startsWith(r))
   const isCustomerRoute = pathname.startsWith('/customer')
 

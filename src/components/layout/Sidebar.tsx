@@ -15,6 +15,7 @@ import {
   LogOut,
   Menu,
   X,
+  Sparkles,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -28,6 +29,7 @@ const NAV_ITEMS = [
   { href: '/vehicles',    label: 'السيارات',      labelEn: 'Vehicles',    icon: Car },
   { href: '/appointments',label: 'المواعيد',      labelEn: 'Appointments',icon: CalendarCheck },
   { href: '/reports',     label: 'التقارير',      labelEn: 'Reports',     icon: BarChart3 },
+  { href: '/chat',        label: 'المساعد الذكي', labelEn: 'AI Chat',     icon: Sparkles },
 ]
 
 export default function Sidebar() {
