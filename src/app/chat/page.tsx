@@ -72,9 +72,11 @@ export default function ChatPage() {
       setMessages(prev => [...prev, assistantMsg])
       setHistory(data.history)
     } catch (err: unknown) {
-      const errorMsg = err && typeof err === 'object' && 'error' in err
-        ? (err as { error: string }).error
-        : 'حصلت مشكلة في الاتصال. حاول تاني.'
+      let errorMsg = 'حصلت مشكلة في الاتصال. حاول تاني.'
+      if (err && typeof err === 'object') {
+        if ('reply' in err) errorMsg = (err as { reply: string }).reply
+        else if ('error' in err) errorMsg = (err as { error: string }).error
+      }
 
       const assistantMsg: DisplayMessage = {
         id: (Date.now() + 1).toString(),
