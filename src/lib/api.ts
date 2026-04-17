@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://elamrety-backend.vercel.app/api/v1'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://2y-cars-backend.vercel.app/api/v1'
 
 export async function apiFetch<T = unknown>(
   path: string,

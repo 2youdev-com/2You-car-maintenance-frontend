@@ -71,7 +71,7 @@ export default function LoginPage() {
           <div className="text-center space-y-3">
             <Image
               src="/logo.png"
-              alt="El Amrety"
+              alt="2Y Cars"
               width={180}
               height={55}
               className="mx-auto"
@@ -220,7 +220,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <p className="text-center text-xs text-muted-foreground mt-5 font-arabic">
-          © 2024 El Amrety Center · جميع الحقوق محفوظة
+          © 2024 2Y Cars · جميع الحقوق محفوظة
         </p>
       </div>
     </div>

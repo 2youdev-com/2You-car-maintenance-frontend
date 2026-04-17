@@ -90,7 +90,7 @@ export default function DashboardPage() {
       <div>
         <h1 className="text-2xl font-bold text-foreground font-arabic">لوحة التحكم</h1>
         <p className="text-sm text-muted-foreground font-arabic mt-1">
-          مرحباً بك في نظام إدارة مركز العمريطي
+          مرحباً بك في نظام إدارة 2Y Cars
         </p>
       </div>
 

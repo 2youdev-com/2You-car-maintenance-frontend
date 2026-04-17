@@ -3,8 +3,8 @@ import './globals.css'
 import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
-  title: 'El Amrety Center | نظام إدارة مركز العمريطي',
-  description: 'منصة إدارة مراكز صيانة السيارات — El Amrety Center Management System',
+  title: '2Y Cars | نظام إدارة مراكز صيانة السيارات',
+  description: 'منصة إدارة مراكز صيانة السيارات — 2Y Cars Management System',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

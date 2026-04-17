@@ -56,7 +56,7 @@ export default function SettingsPage() {
     email: true,
   })
 
-  const QR_CODE = 'ELAMRETY-001'
+  const QR_CODE = '2YCARS-001'
 
   const copyQR = () => {
     navigator.clipboard.writeText(QR_CODE)
@@ -84,11 +84,11 @@ export default function SettingsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="text-xs text-muted-foreground mb-1.5 block font-arabic">اسم المركز (إنجليزي)</label>
-            <input className={inputCls} defaultValue="El Amrety Center" />
+            <input className={inputCls} defaultValue="2Y Cars" />
           </div>
           <div>
             <label className="text-xs text-muted-foreground mb-1.5 block font-arabic">اسم المركز (عربي)</label>
-            <input className={inputCls} defaultValue="مركز العمريطي" />
+            <input className={inputCls} defaultValue="2Y Cars" />
           </div>
           <div>
             <label className="text-xs text-muted-foreground mb-1.5 block font-arabic">رقم الهاتف</label>
@@ -96,7 +96,7 @@ export default function SettingsPage() {
           </div>
           <div>
             <label className="text-xs text-muted-foreground mb-1.5 block font-arabic">البريد الإلكتروني</label>
-            <input className={inputCls} type="email" defaultValue="info@elamrety.com" />
+            <input className={inputCls} type="email" defaultValue="info@2ycars.com" />
           </div>
           <div className="sm:col-span-2">
             <label className="text-xs text-muted-foreground mb-1.5 block font-arabic">العنوان</label>

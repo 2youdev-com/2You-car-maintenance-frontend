@@ -26,7 +26,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
     <div className="min-h-screen bg-surface-900 flex flex-col">
       {/* Top bar */}
       <header className="sticky top-0 z-30 bg-surface-800/80 backdrop-blur-xl border-b border-white/[0.06] px-4 py-3 flex items-center justify-between">
-        <Image src="/logo.png" alt="El Amrety" width={110} height={33} priority
+        <Image src="/logo.png" alt="2Y Cars" width={110} height={33} priority
           onError={(e) => { (e.target as HTMLImageElement).src = '/logo.svg' }} />
         <button onClick={handleLogout} className="flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 transition-colors font-arabic">
           <LogOut size={14} />

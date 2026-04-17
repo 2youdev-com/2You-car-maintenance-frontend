@@ -1,5 +1,5 @@
 // ================================================================
-// El Amrety - Type Definitions
+// 2Y Cars - Type Definitions
 // ================================================================
 
 export type UserRole = 'admin' | 'customer'

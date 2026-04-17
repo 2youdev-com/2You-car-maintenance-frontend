@@ -47,7 +47,7 @@ export default function Sidebar() {
     <aside className="flex flex-col h-full w-64 bg-surface-800 border-r border-white/[0.06]">
       {/* Logo */}
       <div className="flex items-center gap-3 px-5 py-6 border-b border-white/[0.06]">
-        <Image src="/logo.png" alt="El Amrety" width={140} height={42} priority />
+        <Image src="/logo.png" alt="2Y Cars" width={140} height={42} priority />
       </div>
 
       {/* Nav */}
