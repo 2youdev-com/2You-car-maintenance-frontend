@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -9,41 +9,48 @@ import {
   Plus, Trash2, Save, Wrench, Car, User,
   Gauge, Calendar, DollarSign, FileText, Package
 } from 'lucide-react'
-import type { MaintenanceLogFormData, SparePart, Profile, Vehicle } from '@/types'
+import type { MaintenanceLogFormData, SparePart } from '@/types'
+import { maintenanceStore, useCustomers, useVehicles } from '@/lib/mock-store'
 
 // ── Zod Schema ─────────────────────────────────────────────────
+const emptyToUndefined = (v: unknown) =>
+  v === '' || v === null || v === undefined ? undefined : v
+
+const requiredNumber = (msg = 'أدخل رقم صحيح') =>
+  z.preprocess(
+    emptyToUndefined,
+    z.coerce.number({ invalid_type_error: msg, required_error: msg }).min(0, msg),
+  )
+
+const optionalNumber = () =>
+  z.preprocess(
+    emptyToUndefined,
+    z.coerce.number().min(0).optional(),
+  )
+
 const logSchema = z.object({
   customer_id:       z.string().min(1, 'اختر العميل'),
   vehicle_id:        z.string().min(1, 'اختر السيارة'),
   date:              z.string().min(1, 'التاريخ مطلوب'),
-  mileage:           z.coerce.number().min(0),
-  next_service_km:   z.coerce.number().min(0),
+  mileage:           requiredNumber('أدخل قراءة العداد'),
+  next_service_km:   optionalNumber(),
   next_service_date: z.string().optional(),
-  service_type:      z.enum(['oil_change','brake_service','full_service','repair','inspection','tyre_change','other']),
+  service_type:      z.enum(
+    ['oil_change','brake_service','full_service','repair','inspection','tyre_change','other'],
+    { required_error: 'اختر نوع الخدمة', invalid_type_error: 'اختر نوع الخدمة' },
+  ),
   description:       z.string().optional(),
   notes:             z.string().optional(),
-  total_cost:        z.coerce.number().min(0),
+  total_cost:        requiredNumber('أدخل التكلفة الإجمالية'),
   parts: z.array(z.object({
     part_id:       z.string().optional(),
     part_name:     z.string().min(1, 'اسم القطعة مطلوب'),
-    quantity_used: z.coerce.number().min(1),
-    unit_price:    z.coerce.number().min(0),
+    quantity_used: requiredNumber('الكمية على الأقل 1'),
+    unit_price:    requiredNumber('أدخل السعر'),
   })),
 })
 
-// ── Mock data (replace with Supabase) ──────────────────────────
-const MOCK_CUSTOMERS: Pick<Profile, 'id' | 'full_name' | 'phone'>[] = [
-  { id: 'c1', full_name: 'أحمد محمد السيد',   phone: '01012345678' },
-  { id: 'c2', full_name: 'محمد علي إبراهيم',  phone: '01198765432' },
-  { id: 'c3', full_name: 'خالد عبدالله حسن',  phone: '01234567890' },
-]
-
-const MOCK_VEHICLES: (Pick<Vehicle, 'id' | 'make' | 'model' | 'year' | 'plate_number'> & { customer_id: string })[] = [
-  { id: 'v1', customer_id: 'c1', make: 'BMW',      model: '320i',   year: 2021, plate_number: 'أ ب ج 1234' },
-  { id: 'v2', customer_id: 'c2', make: 'Mercedes', model: 'C200',   year: 2020, plate_number: 'د ه و 5678' },
-  { id: 'v3', customer_id: 'c3', make: 'Toyota',   model: 'Camry',  year: 2022, plate_number: 'ز ح ط 9012' },
-]
-
+// ── Mock parts catalog (TODO: replace with Supabase inventory) ─
 const MOCK_PARTS: Pick<SparePart, 'id' | 'name' | 'price' | 'quantity'>[] = [
   { id: 'p1', name: 'زيت موتور Castrol 5W40',    price: 280, quantity: 42 },
   { id: 'p2', name: 'فلتر زيت Bosch',             price: 85,  quantity: 30 },
@@ -81,35 +88,41 @@ function Field({ label, icon: Icon, error, children }: {
   )
 }
 
-function Input({ className = '', ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
+const Input = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
+  ({ className = '', ...props }, ref) => (
     <input
+      ref={ref}
       className={`w-full h-9 px-3 rounded-lg bg-surface-700 border border-white/[0.08]
         text-sm text-foreground placeholder:text-muted-foreground
         focus:outline-none focus:ring-1 focus:ring-brand-red focus:border-brand-red/50
         transition-all duration-150 font-arabic ${className}`}
       {...props}
     />
-  )
-}
+  ),
+)
+Input.displayName = 'Input'
 
-function Select({ className = '', children, ...props }: React.SelectHTMLAttributes<HTMLSelectElement> & { children: React.ReactNode }) {
-  return (
-    <select
-      className={`w-full h-9 px-3 rounded-lg bg-surface-700 border border-white/[0.08]
-        text-sm text-foreground focus:outline-none focus:ring-1
-        focus:ring-brand-red focus:border-brand-red/50 transition-all duration-150
-        font-arabic cursor-pointer ${className}`}
-      {...props}
-    >
-      {children}
-    </select>
-  )
-}
+const Select = forwardRef<
+  HTMLSelectElement,
+  React.SelectHTMLAttributes<HTMLSelectElement> & { children: React.ReactNode }
+>(({ className = '', children, ...props }, ref) => (
+  <select
+    ref={ref}
+    className={`w-full h-9 px-3 rounded-lg bg-surface-700 border border-white/[0.08]
+      text-sm text-foreground focus:outline-none focus:ring-1
+      focus:ring-brand-red focus:border-brand-red/50 transition-all duration-150
+      font-arabic cursor-pointer ${className}`}
+    {...props}
+  >
+    {children}
+  </select>
+))
+Select.displayName = 'Select'
 
-function Textarea({ className = '', ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return (
+const Textarea = forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
+  ({ className = '', ...props }, ref) => (
     <textarea
+      ref={ref}
       rows={3}
       className={`w-full px-3 py-2 rounded-lg bg-surface-700 border border-white/[0.08]
         text-sm text-foreground placeholder:text-muted-foreground resize-none
@@ -117,13 +130,16 @@ function Textarea({ className = '', ...props }: React.TextareaHTMLAttributes<HTM
         transition-all duration-150 font-arabic ${className}`}
       {...props}
     />
-  )
-}
+  ),
+)
+Textarea.displayName = 'Textarea'
 
 // ── Main Form Component ─────────────────────────────────────────
 export default function MaintenanceLogForm({ onSuccess }: { onSuccess?: () => void }) {
   const [selectedCustomer, setSelectedCustomer] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const customers = useCustomers()
+  const allVehicles = useVehicles()
 
   const {
     register,
@@ -143,9 +159,18 @@ export default function MaintenanceLogForm({ onSuccess }: { onSuccess?: () => vo
   const { fields, append, remove } = useFieldArray({ control, name: 'parts' })
 
   const parts = watch('parts')
-  const autoTotal = parts.reduce((sum, p) => sum + (p.quantity_used || 0) * (p.unit_price || 0), 0)
+  const autoTotal = parts.reduce(
+    (sum, p) => sum + (Number(p.quantity_used) || 0) * (Number(p.unit_price) || 0),
+    0,
+  )
 
-  const filteredVehicles = MOCK_VEHICLES.filter((v) => v.customer_id === selectedCustomer)
+  useEffect(() => {
+    if (fields.length > 0) {
+      setValue('total_cost', autoTotal, { shouldValidate: true })
+    }
+  }, [autoTotal, fields.length, setValue])
+
+  const filteredVehicles = allVehicles.filter((v) => v.customer_id === selectedCustomer)
 
   const handlePartSelect = (index: number, partId: string) => {
     const part = MOCK_PARTS.find((p) => p.id === partId)
@@ -158,9 +183,25 @@ export default function MaintenanceLogForm({ onSuccess }: { onSuccess?: () => vo
   const onSubmit = async (data: MaintenanceLogFormData) => {
     setIsSubmitting(true)
     try {
-      // TODO: POST to /api/maintenance-logs via Supabase
-      console.log('Submitting:', data)
-      await new Promise((r) => setTimeout(r, 1000)) // simulate request
+      await new Promise((r) => setTimeout(r, 400)) // simulate request
+      maintenanceStore.add({
+        customer_id: data.customer_id,
+        vehicle_id: data.vehicle_id,
+        date: data.date,
+        service_type: data.service_type,
+        mileage: Number(data.mileage) || 0,
+        next_service_km: data.next_service_km ? Number(data.next_service_km) : undefined,
+        next_service_date: data.next_service_date || undefined,
+        description: data.description,
+        notes: data.notes,
+        total_cost: Number(data.total_cost) || 0,
+        parts: (data.parts ?? []).map((p) => ({
+          part_id: p.part_id,
+          part_name: p.part_name,
+          quantity_used: Number(p.quantity_used) || 0,
+          unit_price: Number(p.unit_price) || 0,
+        })),
+      })
       toast.success('تم حفظ سجل الصيانة بنجاح ✅')
       onSuccess?.()
     } catch {
@@ -180,19 +221,24 @@ export default function MaintenanceLogForm({ onSuccess }: { onSuccess?: () => vo
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field label="العميل" icon={User} error={errors.customer_id?.message}>
-            <Select
-              {...register('customer_id')}
-              onChange={(e) => {
-                setSelectedCustomer(e.target.value)
-                setValue('customer_id', e.target.value)
-                setValue('vehicle_id', '')
-              }}
-            >
-              <option value="">-- اختر العميل --</option>
-              {MOCK_CUSTOMERS.map((c) => (
-                <option key={c.id} value={c.id}>{c.full_name} · {c.phone}</option>
-              ))}
-            </Select>
+            {(() => {
+              const reg = register('customer_id')
+              return (
+                <Select
+                  {...reg}
+                  onChange={(e) => {
+                    reg.onChange(e)
+                    setSelectedCustomer(e.target.value)
+                    setValue('vehicle_id', '', { shouldValidate: true })
+                  }}
+                >
+                  <option value="">-- اختر العميل --</option>
+                  {customers.map((c) => (
+                    <option key={c.id} value={c.id}>{c.full_name} · {c.phone}</option>
+                  ))}
+                </Select>
+              )
+            })()}
           </Field>
 
           <Field label="السيارة" icon={Car} error={errors.vehicle_id?.message}>

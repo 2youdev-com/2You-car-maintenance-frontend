@@ -5,7 +5,7 @@ import { ClipboardList } from 'lucide-react'
 
 export default function MaintenancePage() {
   return (
-    <div className="space-y-6 animate-fade-in max-w-4xl">
+    <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-brand-red/10 flex items-center justify-center">
           <ClipboardList size={20} className="text-brand-red" />

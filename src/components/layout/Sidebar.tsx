@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils'
 
 const NAV_ITEMS = [
   { href: '/dashboard',   label: 'لوحة التحكم',  labelEn: 'Dashboard',   icon: LayoutDashboard },
-  { href: '/maintenance', label: 'سجلات الصيانة', labelEn: 'Maintenance', icon: ClipboardList },
+  { href: '/maintenance', label: 'تسجيل صيانة', labelEn: 'Maintenance', icon: ClipboardList },
   { href: '/inventory',   label: 'المخزون',       labelEn: 'Inventory',   icon: Package },
   { href: '/customers',   label: 'العملاء',       labelEn: 'Customers',   icon: Users },
   { href: '/vehicles',    label: 'السيارات',      labelEn: 'Vehicles',    icon: Car },

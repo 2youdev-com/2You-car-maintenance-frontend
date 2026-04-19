@@ -1,7 +1,7 @@
 import Sidebar from '@/components/layout/Sidebar'
 import { Bell, Search } from 'lucide-react'
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: '#0A0C10' }}>
       <Sidebar />
@@ -15,7 +15,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 1.25rem',
+          padding: '0 1.5rem',
           flexShrink: 0,
         }}>
           <div style={{
@@ -62,8 +62,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           </div>
         </header>
-        <main style={{ flex: 1, overflowY: 'auto', padding: '1.5rem' }}>
-          {children}
+        <main style={{ flex: 1, overflowY: 'auto' }}>
+          <div style={{
+            maxWidth: '90rem',
+            margin: '0 auto',
+            padding: 'clamp(1.5rem, 3vw, 2.5rem) clamp(1.25rem, 4vw, 3rem)',
+          }}>
+            {children}
+          </div>
         </main>
       </div>
     </div>
