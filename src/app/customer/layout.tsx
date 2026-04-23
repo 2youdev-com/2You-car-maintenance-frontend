@@ -3,12 +3,13 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Home, CalendarPlus, Package, Wrench, LogOut } from 'lucide-react'
+import { Home, CalendarPlus, Package, Wrench, LogOut, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const NAV = [
   { href: '/customer',             label: 'الرئيسية', icon: Home },
   { href: '/customer/booking',     label: 'حجز موعد', icon: CalendarPlus },
+  { href: '/customer/chat',        label: 'المساعد',  icon: Sparkles },
   { href: '/customer/products',    label: 'المنتجات', icon: Package },
   { href: '/customer/maintenance', label: 'صيانتي',   icon: Wrench },
 ]
