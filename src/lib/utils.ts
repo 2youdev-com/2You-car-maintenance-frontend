@@ -41,6 +41,7 @@ export const STATUS_LABELS: Record<string, string> = {
   completed:   'مكتمل',
   in_progress: 'جارٍ',
   pending:     'معلق',
+  confirmed:   'مؤكد',
   cancelled:   'ملغي',
 }
 
@@ -48,5 +49,6 @@ export const STATUS_BADGE: Record<string, string> = {
   completed:   'badge-green',
   in_progress: 'badge-blue',
   pending:     'badge-yellow',
+  confirmed:   'badge-blue',
   cancelled:   'badge-red',
 }
