@@ -403,10 +403,11 @@ export default function CustomerChatPage() {
       )}
       <aside
         style={{
-          position: 'fixed', top: 0, bottom: 0, insetInlineStart: 0,
-          width: '85%', maxWidth: '20rem',
-          backgroundColor: '#111318', borderInlineEnd: '1px solid rgba(255,255,255,0.08)',
-          transform: drawerOpen ? 'translateX(0)' : 'translateX(-100%)',
+          position: 'fixed', top: 0, bottom: 0, right: 0,
+          width: '75%', maxWidth: '18rem',
+          backgroundColor: '#111318', borderLeft: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: drawerOpen ? '-4px 0 24px rgba(0,0,0,0.5)' : 'none',
+          transform: drawerOpen ? 'translateX(0)' : 'translateX(100%)',
           transition: 'transform 0.25s ease-out',
           zIndex: 51, display: 'flex', flexDirection: 'column',
         }}
